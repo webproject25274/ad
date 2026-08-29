@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — JAICLUB Pages</title>
+<style>
+  :root{
+    --bg-navy: #0b1220;
+    --bg-navy-2: #0f1a2e;
+    --gold: #f6cf5b;
+    --gold-2: #ffe08a;
+    --text-white: #f5f7fb;
+    --text-muted: #b8c1d1;
+    --border-gold: rgba(246, 207, 91, 0.55);
+    --panel: #111c30;
+    --input-bg: #0c1626;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg-navy);
+    color: var(--text-white);
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    min-height: 100vh;
+    padding: 30px 20px 80px;
+  }
+  h1 { text-align: center; font-size: 1.6rem; margin-bottom: 6px; }
+  .subhead { text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 32px; }
+
+  /* ---- Login screen ---- */
+  .login-wrap {
+    max-width: 380px;
+    margin: 60px auto 0;
+    background: var(--panel);
+    border: 1px solid rgba(246, 207, 91, 0.25);
+    border-radius: 16px;
+    padding: 30px;
+  }
+  .login-wrap h2 { margin-top: 0; color: var(--gold); font-size: 1.1rem; }
+  .login-wrap input {
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(246,207,91,0.3);
+    background: var(--input-bg);
+    color: var(--text-white);
+    font-size: 0.95rem;
+  }
+  .login-wrap button {
+    width: 100%;
+    margin-top: 18px;
+    padding: 13px;
+    border-radius: 999px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    background: linear-gradient(180deg, var(--gold-2), var(--gold));
+    color: #1a1400;
+  }
+  .login-error { color: #ff8080; font-size: 0.85rem; margin-top: 10px; min-height: 1em; }
+
+  /* ---- Main admin layout ---- */
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+  .panel {
+    background: var(--panel);
+    border: 1px solid rgba(246, 207, 91, 0.25);
+    border-radius: 16px;
+    padding: 26px;
+  }
+  .panel h2 { font-size: 1.05rem; margin: 0 0 18px 0; color: var(--gold); }
+  label { display: block; font-size: 0.85rem; color: var(--text-muted); margin: 16px 0 6px; }
+  label:first-of-type { margin-top: 0; }
+  input[type="text"], input[type="url"], textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(246,207,91,0.3);
+    background: var(--input-bg);
+    color: var(--text-white);
+    font-size: 0.95rem;
+    font-family: inherit;
+  }
+  textarea { resize: vertical; min-height: 70px; }
+  input[type="file"] { color: var(--text-muted); font-size: 0.85rem; }
+  .section-divider { border: none; border-top: 1px solid rgba(246,207,91,0.2); margin: 24px 0; }
+  .btn-row {
+    max-width: 1100px;
+    margin: 28px auto 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .action-btn {
+    padding: 14px 28px;
+    border-radius: 999px;
+    border: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    letter-spacing: 0.3px;
+  }
+  .action-btn.primary { background: linear-gradient(180deg, var(--gold-2), var(--gold)); color: #1a1400; }
+  .action-btn.secondary { background: transparent; color: var(--text-white); border: 1px solid rgba(246,207,91,0.4); }
+  .save-status { font-size: 0.85rem; color: var(--text-muted); min-width: 160px; }
+  .topbar {
+    max-width: 1100px;
+    margin: 0 auto 20px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .logout-link {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  /* ---- Preview ---- */
+  .preview-wrap {
+    background: radial-gradient(ellipse at top, var(--bg-navy-2) 0%, var(--bg-navy) 60%);
+    border-radius: 16px;
+    padding: 36px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .preview-card { display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 340px; width: 100%; }
+  .p-avatar-wrap {
+    width: 110px; height: 110px; border-radius: 50%; padding: 3px;
+    background: var(--gold); box-shadow: 0 0 30px 6px rgba(246, 207, 91, 0.45); margin-bottom: 22px;
+  }
+  .p-avatar-wrap img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; background: #1e293b; }
+  .p-title { font-size: 1.3rem; font-weight: 800; line-height: 1.2; margin: 0 0 14px 0; }
+  .p-title .arrows { color: var(--gold); }
+  .p-subtitle { font-size: 0.7rem; letter-spacing: 3px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; margin-bottom: 20px; }
+  .p-btn {
+    display: block; width: 100%; padding: 13px 0; border-radius: 999px;
+    background: linear-gradient(180deg, var(--gold-2), var(--gold)); color: #1a1400;
+    font-size: 0.9rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 10px;
+  }
+  .p-disclaimer { margin-top: 22px; border: 1px solid var(--border-gold); border-radius: 10px; padding: 14px 16px; font-size: 0.72rem; line-height: 1.5; }
+  .preview-toggle { display: flex; justify-content: center; gap: 8px; margin-bottom: 18px; }
+  .preview-toggle button {
+    padding: 6px 16px; border-radius: 999px; border: 1px solid rgba(246,207,91,0.4);
+    background: transparent; color: var(--text-white); font-size: 0.8rem; cursor: pointer;
+  }
+  .preview-toggle button.active { background: var(--gold); color: #1a1400; border-color: var(--gold); }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+  <!-- ================= LOGIN SCREEN ================= -->
+  <div class="login-wrap" id="loginWrap">
+    <h2>Admin Login</h2>
+    <input type="text" id="emailInput" placeholder="Email" autocomplete="username">
+    <input type="password" id="passwordInput" placeholder="Password" autocomplete="current-password">
+    <button id="loginBtn">Log in</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+
+  <!-- ================= ADMIN PANEL (shown after login) ================= -->
+  <div id="adminWrap" class="hidden">
+    <div class="topbar"><span class="logout-link" id="logoutLink">Log out</span></div>
+    <h1>Admin Panel</h1>
+    <p class="subhead">Edit the logo, text, and links shown on whatsapp.html and register.html</p>
+
+    <div class="layout">
+      <div class="panel">
+        <h2>Content</h2>
+        <label for="logoInput">Profile picture / logo</label>
+        <input type="file" id="logoInput" accept="image/*">
+
+        <label for="titleLine1">Title — line 1</label>
+        <input type="text" id="titleLine1" placeholder="JAICLUB » »">
+
+        <label for="titleLine2">Title — line 2</label>
+        <input type="text" id="titleLine2" placeholder="Santiy224 Official">
+
+        <label for="subtitle">Subtitle</label>
+        <input type="text" id="subtitle" placeholder="Join our community">
+
+        <label for="disclaimer">Disclaimer text</label>
+        <textarea id="disclaimer"></textarea>
+
+        <hr class="section-divider">
+        <h2>WhatsApp page</h2>
+        <label for="whatsappButtonText">Button text</label>
+        <input type="text" id="whatsappButtonText" placeholder="WhatsApp Now">
+        <label for="whatsappLink">WhatsApp link</label>
+        <input type="url" id="whatsappLink" placeholder="https://wa.me/91XXXXXXXXXX">
+
+        <hr class="section-divider">
+        <h2>Register page</h2>
+        <label for="registerButtonText">Button text</label>
+        <input type="text" id="registerButtonText" placeholder="Register Now">
+        <label for="registerLink">Registration link</label>
+        <input type="url" id="registerLink" placeholder="https://your-signup-link.com">
+      </div>
+
+      <div class="panel">
+        <h2>Live preview</h2>
+        <div class="preview-toggle">
+          <button id="toggleWhatsapp" class="active">WhatsApp page</button>
+          <button id="toggleRegister">Register page</button>
+        </div>
+        <div class="preview-wrap">
+          <div class="preview-card">
+            <div class="p-avatar-wrap"><img id="pLogo" src="" alt="Preview logo"></div>
+            <h3 class="p-title" id="pTitle"></h3>
+            <p class="p-subtitle" id="pSubtitle"></p>
+            <div class="p-btn" id="pButton"></div>
+            <div class="p-disclaimer" id="pDisclaimer"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="action-btn primary" id="saveBtn">Save changes (live on site)</button>
+      <span class="save-status" id="saveStatus"></span>
+    </div>
+  </div>
+
+  <!-- Firebase (compat SDK) -->
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+  <script>
+    // ⬇️ PASTE your firebaseConfig object here (same one used in whatsapp.html / register.html)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCYZZtV0sCWT0Db61Eo7Gx_ecdCVY9g55k",
+      authDomain: "lads-ecb4c.firebaseapp.com",
+      projectId: "lads-ecb4c",
+      storageBucket: "lads-ecb4c.firebasestorage.app",
+      messagingSenderId: "962082925057",
+      appId: "1:962082925057:web:fefa6f292849cff5252e00"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const docRef = db.collection('siteConfig').doc('main');
+
+    // ---------- Login handling ----------
+    const loginWrap = document.getElementById('loginWrap');
+    const adminWrap = document.getElementById('adminWrap');
+
+    document.getElementById('loginBtn').addEventListener('click', () => {
+      const email = document.getElementById('emailInput').value.trim();
+      const password = document.getElementById('passwordInput').value;
+      document.getElementById('loginError').textContent = '';
+      auth.signInWithEmailAndPassword(email, password)
+        .catch(err => {
+          document.getElementById('loginError').textContent = 'Login failed: ' + err.message;
+        });
+    });
+
+    document.getElementById('logoutLink').addEventListener('click', () => auth.signOut());
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        loginWrap.classList.add('hidden');
+        adminWrap.classList.remove('hidden');
+        loadConfig();
+      } else {
+        loginWrap.classList.remove('hidden');
+        adminWrap.classList.add('hidden');
+      }
+    });
+
+    // ---------- Admin form logic ----------
+    let currentLogoDataUrl = '';
+    let currentView = 'whatsapp';
+
+    const els = {
+      titleLine1: document.getElementById('titleLine1'),
+      titleLine2: document.getElementById('titleLine2'),
+      subtitle: document.getElementById('subtitle'),
+      disclaimer: document.getElementById('disclaimer'),
+      whatsappButtonText: document.getElementById('whatsappButtonText'),
+      whatsappLink: document.getElementById('whatsappLink'),
+      registerButtonText: document.getElementById('registerButtonText'),
+      registerLink: document.getElementById('registerLink'),
+    };
+
+    const colorArrows = s => (s || '').replace(/»/g, '<span class="arrows">&raquo;</span>');
+
+    function renderPreview() {
+      document.getElementById('pLogo').src = currentLogoDataUrl || 'logo.jpg';
+      document.getElementById('pTitle').innerHTML =
+        colorArrows(els.titleLine1.value) + '<br>' + colorArrows(els.titleLine2.value);
+      document.getElementById('pSubtitle').textContent = els.subtitle.value;
+      document.getElementById('pDisclaimer').textContent = els.disclaimer.value;
+      document.getElementById('pButton').textContent = currentView === 'whatsapp'
+        ? (els.whatsappButtonText.value || 'WhatsApp Now')
+        : (els.registerButtonText.value || 'Register Now');
+    }
+
+    Object.values(els).forEach(el => el.addEventListener('input', renderPreview));
+
+    document.getElementById('toggleWhatsapp').addEventListener('click', () => {
+      currentView = 'whatsapp';
+      document.getElementById('toggleWhatsapp').classList.add('active');
+      document.getElementById('toggleRegister').classList.remove('active');
+      renderPreview();
+    });
+    document.getElementById('toggleRegister').addEventListener('click', () => {
+      currentView = 'register';
+      document.getElementById('toggleRegister').classList.add('active');
+      document.getElementById('toggleWhatsapp').classList.remove('active');
+      renderPreview();
+    });
+
+    document.getElementById('logoInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        currentLogoDataUrl = ev.target.result;
+        renderPreview();
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function applyConfig(cfg) {
+      currentLogoDataUrl = cfg.logo || '';
+      els.titleLine1.value = cfg.titleLine1 || '';
+      els.titleLine2.value = cfg.titleLine2 || '';
+      els.subtitle.value = cfg.subtitle || '';
+      els.disclaimer.value = cfg.disclaimer || '';
+      els.whatsappButtonText.value = cfg.whatsappButtonText || '';
+      els.whatsappLink.value = cfg.whatsappLink === '#' ? '' : (cfg.whatsappLink || '');
+      els.registerButtonText.value = cfg.registerButtonText || '';
+      els.registerLink.value = cfg.registerLink === '#' ? '' : (cfg.registerLink || '');
+      renderPreview();
+    }
+
+    function loadConfig() {
+      docRef.get().then(doc => {
+        if (doc.exists) applyConfig(doc.data());
+        else renderPreview();
+      }).catch(err => console.error(err));
+    }
+
+    document.getElementById('saveBtn').addEventListener('click', () => {
+      const status = document.getElementById('saveStatus');
+      status.textContent = 'Saving…';
+      const cfg = {
+        logo: currentLogoDataUrl || 'logo.jpg',
+        titleLine1: els.titleLine1.value,
+        titleLine2: els.titleLine2.value,
+        subtitle: els.subtitle.value,
+        disclaimer: els.disclaimer.value,
+        whatsappButtonText: els.whatsappButtonText.value || 'WhatsApp Now',
+        whatsappLink: els.whatsappLink.value || '#',
+        registerButtonText: els.registerButtonText.value || 'Register Now',
+        registerLink: els.registerLink.value || '#'
+      };
+      docRef.set(cfg)
+        .then(() => { status.textContent = 'Saved — live on the site now.'; })
+        .catch(err => { status.textContent = 'Save failed: ' + err.message; });
+    });
+  </script>
+
+</body>
+</html>

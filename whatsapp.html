@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>91CLUB » WhatsApp</title>
+<title>JAICLUB » WhatsApp</title>
 <style>
   :root{
     --bg-navy: #0b1220;
@@ -14,15 +14,8 @@
     --text-muted: #b8c1d1;
     --border-gold: rgba(246, 207, 91, 0.55);
   }
-
   * { box-sizing: border-box; }
-
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-  }
-
+  html, body { margin: 0; padding: 0; height: 100%; }
   body {
     background: radial-gradient(ellipse at top, var(--bg-navy-2) 0%, var(--bg-navy) 60%);
     color: var(--text-white);
@@ -33,7 +26,6 @@
     min-height: 100vh;
     padding: 40px 20px;
   }
-
   .card {
     display: flex;
     flex-direction: column;
@@ -42,8 +34,6 @@
     max-width: 560px;
     width: 100%;
   }
-
-  /* ---- Profile photo (edit: swap logo.jpg to change the picture) ---- */
   .avatar-wrap {
     width: 180px;
     height: 180px;
@@ -53,7 +43,6 @@
     box-shadow: 0 0 45px 8px rgba(246, 207, 91, 0.45);
     margin-bottom: 36px;
   }
-
   .avatar-wrap img {
     width: 100%;
     height: 100%;
@@ -62,21 +51,15 @@
     display: block;
     background: #1e293b;
   }
-
-  /* ---- Title ---- */
   .title {
     font-size: clamp(2rem, 6vw, 2.75rem);
     font-weight: 800;
     line-height: 1.15;
     margin: 0 0 22px 0;
     letter-spacing: 0.5px;
+    white-space: pre-line;
   }
-
-  .title .arrows {
-    color: var(--gold);
-  }
-
-  /* ---- Subtitle ---- */
+  .title .arrows { color: var(--gold); }
   .subtitle {
     font-size: 0.95rem;
     letter-spacing: 4px;
@@ -85,8 +68,6 @@
     text-transform: uppercase;
     margin-bottom: 34px;
   }
-
-  /* ---- CTA button ---- */
   .join-btn {
     display: inline-block;
     width: 100%;
@@ -106,18 +87,8 @@
     border: none;
     cursor: pointer;
   }
-
-  .join-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 45px 8px rgba(246, 207, 91, 0.55);
-  }
-
-  .join-btn:focus-visible {
-    outline: 3px solid #fff;
-    outline-offset: 3px;
-  }
-
-  /* ---- Disclaimer box ---- */
+  .join-btn:hover { transform: translateY(-2px); box-shadow: 0 0 45px 8px rgba(246, 207, 91, 0.55); }
+  .join-btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
   .disclaimer {
     margin-top: 46px;
     border: 1px solid var(--border-gold);
@@ -128,7 +99,6 @@
     color: var(--text-white);
     max-width: 460px;
   }
-
   @media (max-width: 480px) {
     .avatar-wrap { width: 140px; height: 140px; }
     .join-btn { font-size: 1.1rem; padding: 17px 0; }
@@ -138,37 +108,71 @@
 </head>
 <body>
 
-  <div class="card">
-
-    <!-- Profile picture: replace logo.jpg in this folder to change it -->
+  <div class="card" id="card" style="visibility:hidden;">
     <div class="avatar-wrap">
-      <img src="logo.jpg" alt="Profile picture">
+      <img id="logoImg" src="logo.jpg" alt="Profile picture">
     </div>
-
-    <h1 class="title">
-      91CLUB <span class="arrows">&raquo;</span> <span class="arrows">&raquo;</span><br>
-      91CLUB Official
-    </h1>
-
-    <p class="subtitle">Join our community</p>
-
-    <a href="#" class="join-btn" id="ctaBtn">WhatsApp Now</a>
-
-    <div class="disclaimer">
-      Educational and informational community content. No real-money gaming or betting is promoted on this page.
-    </div>
-
+    <h1 class="title" id="titleText"></h1>
+    <p class="subtitle" id="subtitleText"></p>
+    <a href="#" class="join-btn" id="ctaBtn"></a>
+    <div class="disclaimer" id="disclaimerText"></div>
   </div>
 
+  <!-- Firebase (compat SDK — simplest to drop in with plain <script> tags) -->
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
   <script>
-    // Edit this to point the button at your actual WhatsApp link
-    const destination = "#"; // <-- e.g. https://wa.me/91XXXXXXXXXX
-    document.getElementById('ctaBtn').addEventListener('click', function(e){
-      if (destination === "#") {
-        e.preventDefault();
-        alert("Add your WhatsApp link in whatsapp.html (search for 'destination').");
+    // ⬇️ PASTE your firebaseConfig object here (same one used in admin.html / register.html)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCYZZtV0sCWT0Db61Eo7Gx_ecdCVY9g55k",
+      authDomain: "lads-ecb4c.firebaseapp.com",
+      projectId: "lads-ecb4c",
+      storageBucket: "lads-ecb4c.firebasestorage.app",
+      messagingSenderId: "962082925057",
+      appId: "1:962082925057:web:fefa6f292849cff5252e00"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const colorArrows = s => (s || '').replace(/»/g, '<span class="arrows">&raquo;</span>');
+
+    function render(cfg) {
+      document.getElementById('logoImg').src = cfg.logo || 'logo.jpg';
+      document.getElementById('titleText').innerHTML =
+        colorArrows(cfg.titleLine1) + '<br>' + colorArrows(cfg.titleLine2);
+      document.getElementById('subtitleText').textContent = cfg.subtitle || '';
+      document.getElementById('disclaimerText').textContent = cfg.disclaimer || '';
+
+      const btn = document.getElementById('ctaBtn');
+      btn.textContent = cfg.whatsappButtonText || 'WhatsApp Now';
+      btn.href = cfg.whatsappLink || '#';
+      btn.onclick = function(e){
+        if (!cfg.whatsappLink || cfg.whatsappLink === '#') {
+          e.preventDefault();
+          alert('No WhatsApp link set yet.');
+        }
+      };
+      document.getElementById('card').style.visibility = 'visible';
+    }
+
+    // onSnapshot = live updates: if the admin changes content while this page
+    // is open, it updates immediately without a refresh.
+    db.collection('siteConfig').doc('main').onSnapshot(
+      (doc) => {
+        if (doc.exists) {
+          render(doc.data());
+        } else {
+          document.getElementById('titleText').textContent = 'Site content not set up yet.';
+          document.getElementById('card').style.visibility = 'visible';
+        }
+      },
+      (err) => {
+        console.error(err);
+        document.getElementById('titleText').textContent = 'Could not load content.';
+        document.getElementById('card').style.visibility = 'visible';
       }
-    });
+    );
   </script>
 
 </body>
