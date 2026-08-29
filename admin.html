@@ -178,24 +178,19 @@
 
     <div class="layout">
       <div class="panel">
-        <h2>Content</h2>
-        <label for="logoInput">Profile picture / logo</label>
+        <label for="logoInput">Profile picture / logo (shared by both pages)</label>
         <input type="file" id="logoInput" accept="image/*">
-
-        <label for="titleLine1">Title — line 1</label>
-        <input type="text" id="titleLine1" placeholder="JAICLUB » »">
-
-        <label for="titleLine2">Title — line 2</label>
-        <input type="text" id="titleLine2" placeholder="Santiy224 Official">
-
-        <label for="subtitle">Subtitle</label>
-        <input type="text" id="subtitle" placeholder="Join our community">
-
-        <label for="disclaimer">Disclaimer text</label>
-        <textarea id="disclaimer"></textarea>
 
         <hr class="section-divider">
         <h2>WhatsApp page</h2>
+        <label for="whatsappTitleLine1">Title — line 1</label>
+        <input type="text" id="whatsappTitleLine1" placeholder="JAICLUB » »">
+        <label for="whatsappTitleLine2">Title — line 2</label>
+        <input type="text" id="whatsappTitleLine2" placeholder="Santiy224 Official">
+        <label for="whatsappSubtitle">Subtitle</label>
+        <input type="text" id="whatsappSubtitle" placeholder="Join our community">
+        <label for="whatsappDisclaimer">Disclaimer / warning text</label>
+        <textarea id="whatsappDisclaimer"></textarea>
         <label for="whatsappButtonText">Button text</label>
         <input type="text" id="whatsappButtonText" placeholder="WhatsApp Now">
         <label for="whatsappLink">WhatsApp link</label>
@@ -203,6 +198,14 @@
 
         <hr class="section-divider">
         <h2>Register page</h2>
+        <label for="registerTitleLine1">Title — line 1</label>
+        <input type="text" id="registerTitleLine1" placeholder="JAICLUB » »">
+        <label for="registerTitleLine2">Title — line 2</label>
+        <input type="text" id="registerTitleLine2" placeholder="Santiy224 Official">
+        <label for="registerSubtitle">Subtitle</label>
+        <input type="text" id="registerSubtitle" placeholder="Join our community">
+        <label for="registerDisclaimer">Disclaimer / warning text</label>
+        <textarea id="registerDisclaimer"></textarea>
         <label for="registerButtonText">Button text</label>
         <input type="text" id="registerButtonText" placeholder="Register Now">
         <label for="registerLink">Registration link</label>
@@ -285,12 +288,16 @@
     let currentView = 'whatsapp';
 
     const els = {
-      titleLine1: document.getElementById('titleLine1'),
-      titleLine2: document.getElementById('titleLine2'),
-      subtitle: document.getElementById('subtitle'),
-      disclaimer: document.getElementById('disclaimer'),
+      whatsappTitleLine1: document.getElementById('whatsappTitleLine1'),
+      whatsappTitleLine2: document.getElementById('whatsappTitleLine2'),
+      whatsappSubtitle: document.getElementById('whatsappSubtitle'),
+      whatsappDisclaimer: document.getElementById('whatsappDisclaimer'),
       whatsappButtonText: document.getElementById('whatsappButtonText'),
       whatsappLink: document.getElementById('whatsappLink'),
+      registerTitleLine1: document.getElementById('registerTitleLine1'),
+      registerTitleLine2: document.getElementById('registerTitleLine2'),
+      registerSubtitle: document.getElementById('registerSubtitle'),
+      registerDisclaimer: document.getElementById('registerDisclaimer'),
       registerButtonText: document.getElementById('registerButtonText'),
       registerLink: document.getElementById('registerLink'),
     };
@@ -299,10 +306,11 @@
 
     function renderPreview() {
       document.getElementById('pLogo').src = currentLogoDataUrl || 'logo.jpg';
+      const prefix = currentView; // 'whatsapp' or 'register'
       document.getElementById('pTitle').innerHTML =
-        colorArrows(els.titleLine1.value) + '<br>' + colorArrows(els.titleLine2.value);
-      document.getElementById('pSubtitle').textContent = els.subtitle.value;
-      document.getElementById('pDisclaimer').textContent = els.disclaimer.value;
+        colorArrows(els[prefix + 'TitleLine1'].value) + '<br>' + colorArrows(els[prefix + 'TitleLine2'].value);
+      document.getElementById('pSubtitle').textContent = els[prefix + 'Subtitle'].value;
+      document.getElementById('pDisclaimer').textContent = els[prefix + 'Disclaimer'].value;
       document.getElementById('pButton').textContent = currentView === 'whatsapp'
         ? (els.whatsappButtonText.value || 'WhatsApp Now')
         : (els.registerButtonText.value || 'Register Now');
@@ -336,12 +344,16 @@
 
     function applyConfig(cfg) {
       currentLogoDataUrl = cfg.logo || '';
-      els.titleLine1.value = cfg.titleLine1 || '';
-      els.titleLine2.value = cfg.titleLine2 || '';
-      els.subtitle.value = cfg.subtitle || '';
-      els.disclaimer.value = cfg.disclaimer || '';
+      els.whatsappTitleLine1.value = cfg.whatsappTitleLine1 || '';
+      els.whatsappTitleLine2.value = cfg.whatsappTitleLine2 || '';
+      els.whatsappSubtitle.value = cfg.whatsappSubtitle || '';
+      els.whatsappDisclaimer.value = cfg.whatsappDisclaimer || '';
       els.whatsappButtonText.value = cfg.whatsappButtonText || '';
       els.whatsappLink.value = cfg.whatsappLink === '#' ? '' : (cfg.whatsappLink || '');
+      els.registerTitleLine1.value = cfg.registerTitleLine1 || '';
+      els.registerTitleLine2.value = cfg.registerTitleLine2 || '';
+      els.registerSubtitle.value = cfg.registerSubtitle || '';
+      els.registerDisclaimer.value = cfg.registerDisclaimer || '';
       els.registerButtonText.value = cfg.registerButtonText || '';
       els.registerLink.value = cfg.registerLink === '#' ? '' : (cfg.registerLink || '');
       renderPreview();
@@ -359,12 +371,16 @@
       status.textContent = 'Saving…';
       const cfg = {
         logo: currentLogoDataUrl || 'logo.jpg',
-        titleLine1: els.titleLine1.value,
-        titleLine2: els.titleLine2.value,
-        subtitle: els.subtitle.value,
-        disclaimer: els.disclaimer.value,
+        whatsappTitleLine1: els.whatsappTitleLine1.value,
+        whatsappTitleLine2: els.whatsappTitleLine2.value,
+        whatsappSubtitle: els.whatsappSubtitle.value,
+        whatsappDisclaimer: els.whatsappDisclaimer.value,
         whatsappButtonText: els.whatsappButtonText.value || 'WhatsApp Now',
         whatsappLink: els.whatsappLink.value || '#',
+        registerTitleLine1: els.registerTitleLine1.value,
+        registerTitleLine2: els.registerTitleLine2.value,
+        registerSubtitle: els.registerSubtitle.value,
+        registerDisclaimer: els.registerDisclaimer.value,
         registerButtonText: els.registerButtonText.value || 'Register Now',
         registerLink: els.registerLink.value || '#'
       };

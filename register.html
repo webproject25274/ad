@@ -140,9 +140,9 @@
     function render(cfg) {
       document.getElementById('logoImg').src = cfg.logo || 'logo.jpg';
       document.getElementById('titleText').innerHTML =
-        colorArrows(cfg.titleLine1) + '<br>' + colorArrows(cfg.titleLine2);
-      document.getElementById('subtitleText').textContent = cfg.subtitle || '';
-      document.getElementById('disclaimerText').textContent = cfg.disclaimer || '';
+        colorArrows(cfg.registerTitleLine1) + '<br>' + colorArrows(cfg.registerTitleLine2);
+      document.getElementById('subtitleText').textContent = cfg.registerSubtitle || '';
+      document.getElementById('disclaimerText').textContent = cfg.registerDisclaimer || '';
 
       const btn = document.getElementById('ctaBtn');
       btn.textContent = cfg.registerButtonText || 'Register Now';
