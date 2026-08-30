@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Register</title>
+<title>JAICLUB » Register</title>
 <style>
   :root{
     --bg-navy: #0b1220;
@@ -111,6 +111,24 @@
     .disclaimer { padding: 18px 20px; font-size: 0.88rem; }
   }
 </style>
+
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1615144653330185');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1615144653330185&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 </head>
 <body>
 
@@ -149,7 +167,7 @@
     let redirectTimerId = null;
     let redirectStartedForSeconds = null;
 
-    function startRedirectCountdown(seconds, link) {
+    function startRedirectCountdown(seconds, link, pixelEvent) {
       const note = document.getElementById('redirectNote');
       if (!seconds || seconds <= 0 || !link || link === '#') {
         note.textContent = '';
@@ -167,6 +185,7 @@
         remaining -= 1;
         if (remaining <= 0) {
           clearInterval(redirectTimerId);
+          if (typeof fbq === 'function' && pixelEvent) fbq('track', pixelEvent);
           window.location.href = link;
         } else {
           note.textContent = `Redirecting automatically in ${remaining}s…`;
@@ -188,11 +207,13 @@
         if (!cfg.registerLink || cfg.registerLink === '#') {
           e.preventDefault();
           alert('No registration link set yet.');
+          return;
         }
+        if (typeof fbq === 'function') fbq('track', 'Lead');
       };
       document.getElementById('card').style.visibility = 'visible';
 
-      startRedirectCountdown(Number(cfg.registerRedirectSeconds), cfg.registerLink);
+      startRedirectCountdown(Number(cfg.registerRedirectSeconds), cfg.registerLink, 'Lead');
     }
 
     // onSnapshot = live updates: if the admin changes content while this page
