@@ -258,7 +258,7 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
-    const docRef = db.collection('siteConfig').doc('main');
+    const docRef = db.collection('siteConfig').doc('site1');
 
     // ---------- Login handling ----------
     const loginWrap = document.getElementById('loginWrap');

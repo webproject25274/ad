@@ -218,7 +218,7 @@ src="https://www.facebook.com/tr?id=1615144653330185&ev=PageView&noscript=1"
 
     // onSnapshot = live updates: if the admin changes content while this page
     // is open, it updates immediately without a refresh.
-    db.collection('siteConfig').doc('main').onSnapshot(
+    db.collection('siteConfig').doc('site1').onSnapshot(
       (doc) => {
         if (doc.exists) {
           render(doc.data());
